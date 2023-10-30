@@ -84,11 +84,6 @@ _G.packer_plugins = {
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp",
     url = "https://github.com/hrsh7th/cmp-nvim-lsp"
   },
-  ["colorbuddy.nvim"] = {
-    loaded = true,
-    path = "/home/angelo/.local/share/nvim/site/pack/packer/start/colorbuddy.nvim",
-    url = "https://github.com/tjdevries/colorbuddy.nvim"
-  },
   harpoon = {
     loaded = true,
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/harpoon",
@@ -118,11 +113,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/mason.nvim",
     url = "https://github.com/williamboman/mason.nvim"
-  },
-  noirbuddy = {
-    loaded = true,
-    path = "/home/angelo/.local/share/nvim/site/pack/packer/start/noirbuddy",
-    url = "https://github.com/jesseleite/nvim-noirbuddy"
   },
   ["null-ls.nvim"] = {
     loaded = true,
@@ -164,6 +154,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
+  },
+  ["tokyonight.nvim"] = {
+    loaded = true,
+    path = "/home/angelo/.local/share/nvim/site/pack/packer/start/tokyonight.nvim",
+    url = "https://github.com/folke/tokyonight.nvim"
   },
   undotree = {
     loaded = true,

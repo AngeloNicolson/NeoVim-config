@@ -28,8 +28,15 @@ vim.opt.isfname:append("@-@")
 
 vim.opt.updatetime = 50
 
-vim.opt.colorcolumn = "117"
+-- vim.opt.colorcolumn = "117"
 
 vim.g.mapleader = " "
 
+-- Sets the js files to be recognized as jsx. Not sure why prettier wasnt picking this up
+--vim.api.nvim_exec([[
+--  augroup FiletypeJSX
+--    autocmd!
+--    autocmd BufRead,BufNewFile *.js set filetype=javascriptreact
+--  augroup END
+--]], false)
 

@@ -17,11 +17,25 @@ null_ls.setup {
 --------------------------------------------------------------------------------
 ---------------------------------- PRETTIER ------------------------------------
 --------------------------------------------------------------------------------
-    null_ls.builtins.formatting.prettier.with({ extra_args = { 
+    null_ls.builtins.formatting.prettierd.with({ extra_args = { 
         "--no-semi", 
-        "--single-quote", 
-        "--jsx-single-quote" 
-    }, filetypes = { "json", "jsx", "typescript", "js" }}),
+        "--double-quote", 
+        '--jsx',
+        '--jsx=react',
+        "--jsx-single-quote", 
+        "--jsx-bracket-same-line",
+        "--jsx-closing-tag-with-newline",
+    }, filetypes = {
+    "css",
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "json",
+    "html",
+    "scss",
+    "less"
+  }}),
 
 --------------------------------------------------------------------------------
 ------------------------------------ BLACK -------------------------------------

@@ -17,10 +17,7 @@ return require('packer').startup(function(use)
  -------------------------------------------------------------
  -------------------------- THEME ----------------------------
  -------------------------------------------------------------
-  use {
-    "jesseleite/nvim-noirbuddy", as = "noirbuddy",
-    requires = { "tjdevries/colorbuddy.nvim", branch = "dev" }
-  }
+  use('folke/tokyonight.nvim', {lazy = false}, {priority = 1000})
   use('nvim-treesitter/nvim-treesitter', {run = ':TSUpdate'})
   use('christoomey/vim-tmux-navigator', {lazy = false})
   use('theprimeagen/harpoon')
@@ -34,6 +31,10 @@ return require('packer').startup(function(use)
  -- use("jose-elias-alvarez/null-ls.nvim")
  -- use('mhartington/formatter.nvim' )
 
+
+
+ -- Replace jose-elias-alvarez/null-ls.nvim with nvimtools/none-ls.nvim in your choice of package manager.
+ -- https://github.com/nvimtools/none-ls.nvim
   use('jose-elias-alvarez/null-ls.nvim')
   -- use('MunifTanjim/prettier.nvim')
 
