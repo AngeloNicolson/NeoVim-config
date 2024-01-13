@@ -84,6 +84,16 @@ _G.packer_plugins = {
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/cmp-nvim-lsp",
     url = "https://github.com/hrsh7th/cmp-nvim-lsp"
   },
+  ["gen.nvim"] = {
+    loaded = true,
+    path = "/home/angelo/.local/share/nvim/site/pack/packer/start/gen.nvim",
+    url = "https://github.com/David-Kunz/gen.nvim"
+  },
+  ["gruvbox-material"] = {
+    loaded = true,
+    path = "/home/angelo/.local/share/nvim/site/pack/packer/start/gruvbox-material",
+    url = "https://github.com/sainnhe/gruvbox-material"
+  },
   harpoon = {
     loaded = true,
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/harpoon",
@@ -155,11 +165,6 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/angelo/.local/share/nvim/site/pack/packer/start/telescope.nvim",
     url = "https://github.com/nvim-telescope/telescope.nvim"
-  },
-  ["tokyonight.nvim"] = {
-    loaded = true,
-    path = "/home/angelo/.local/share/nvim/site/pack/packer/start/tokyonight.nvim",
-    url = "https://github.com/folke/tokyonight.nvim"
   },
   undotree = {
     loaded = true,

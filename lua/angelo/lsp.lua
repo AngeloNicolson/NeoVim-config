@@ -77,9 +77,9 @@ null_ls.setup({
 		--------------------------------------------------------------------------------
 		null_ls.builtins.formatting.clang_format.with({
 			extra_args = {
-				"--style=LLVM", -- Use LLVM style
+				"--style=Microsoft",
 			},
-			filetypes = { "c", "cpp", "h" },
+			filetypes = { "c", "cpp", "h", "hpp" },
 		}),
 
 		--------------------------------------------------------------------------------

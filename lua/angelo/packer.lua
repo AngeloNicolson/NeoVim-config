@@ -18,7 +18,7 @@ return require("packer").startup(function(use)
 	-------------------------------------------------------------
 	-------------------------- THEME ----------------------------
 	-------------------------------------------------------------
-	use("folke/tokyonight.nvim", { lazy = false }, { priority = 1000 })
+	use("sainnhe/gruvbox-material")
 	use("nvim-treesitter/nvim-treesitter", { run = ":TSUpdate" })
 	use("christoomey/vim-tmux-navigator", { lazy = false })
 	use("theprimeagen/harpoon")
@@ -69,4 +69,9 @@ return require("packer").startup(function(use)
 		end,
 		requires = { "nvim-lua/plenary.nvim" },
 	}) -- use('MunifTanjim/prettier.nvim')
+
+	-------------------------------------------------------------
+	------------------- AI ASSISTANT VIRGIL ---------------------
+	-------------------------------------------------------------
+	use({ "David-Kunz/gen.nvim" })
 end)

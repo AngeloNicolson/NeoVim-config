@@ -15,7 +15,7 @@ end
 lualine.setup({
 	options = {
 		icons_enabled = true,
-		theme = "tokyonight",
+		theme = "gruvbox-material",
 		filetype = { colored = false },
 		component_separators = { left = "", right = "" },
 		section_separators = { left = "", right = "" },
