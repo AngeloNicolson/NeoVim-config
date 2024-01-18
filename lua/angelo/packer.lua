@@ -8,11 +8,37 @@ vim.cmd([[packadd packer.nvim]])
 -------------------------------------------------------------
 return require("packer").startup(function(use)
 	use("wbthomason/packer.nvim")
+
+	-------------------------------------------------------------
+	------------------------ TELESCOPE --------------------------
+	-------------------------------------------------------------
 	use({
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.2",
+		tag = "0.1.5",
 		-- or                            , branch = '0.1.x',
-		requires = { { "nvim-lua/plenary.nvim" } },
+		requires = {
+			{ "nvim-lua/plenary.nvim" },
+			{
+				"nvim-telescope/telescope-fzf-native.nvim",
+				run = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
+			},
+		},
+	})
+	use({ "nvim-telescope/telescope-ui-select.nvim" })
+
+	-------------------------------------------------------------
+	--------------- POPUP UI/Floating Window --------------------
+	-------------------------------------------------------------
+	use({
+		"folke/noice.nvim",
+		requires = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			--   If not available, we use `mini` as the fallback
+			"rcarriga/nvim-notify",
+		},
 	})
 
 	-------------------------------------------------------------
@@ -73,5 +99,5 @@ return require("packer").startup(function(use)
 	-------------------------------------------------------------
 	------------------- AI ASSISTANT VIRGIL ---------------------
 	-------------------------------------------------------------
-	use({ "David-Kunz/gen.nvim" })
+	--use({ "David-Kunz/gen.nvim" })
 end)
