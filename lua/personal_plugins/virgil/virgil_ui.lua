@@ -94,3 +94,99 @@ function M.create_window(opts)
 end
 
 return M
+--------------------------------------------------------------------------------
+---------------------------- V.I.R.G.I.L INTERFACE -----------------------------
+--------------------------------------------------------------------------------
+local function initiateVirgil()
+	-- Define the first popup window with color settings
+	local virgilPopup = Popup({
+		focusable = false,
+		border = {
+			style = "rounded",
+			highlight = "Normal", -- Border color
+			text = {
+				fg = "Blue", -- Text color
+			},
+		},
+		text = {
+			fg = "VirgilPopupText", -- Color group for text
+		},
+		position = "50%",
+		size = {
+			width = "80%",
+			height = "60%",
+		},
+	
+	-- Define a method to update the content of the popup
+	function virgilPopup:update_content(value)
+		vim.api.nvim_buf_set_lines(self.bufnr, -1, -1, false, { value })
+	end
+
+	--------------------------------------------------------------------------------
+	------------------------------------ INPUT -------------------------------------
+	--------------------------------------------------------------------------------
+
+	-- Define the input popup window
+	local inputPopup = Popup({
+		enter = true,
+		focusable = true,
+		border = {
+			style = "rounded",
+			highlight = "Normal", -- Border color
+			text = {
+				fg = "Blue", -- Text color
+			},
+		},
+		text = {
+			fg = "VirgilPopupText", -- Color group for text
+		},
+		position = "50%",
+		size = {
+			width = "50%",
+			height = "30%",
+		},
+	})
+
+	-- Set the content of the input popup
+	local inputBuffer = "Test "
+	vim.api.nvim_buf_set_lines(inputPopup.bufnr, 0, -1, false, { inputBuffer })
+
+	-- Set up autocommand to handle Enter key press in input popup buffer
+	vim.cmd([[
+augroup inputPopupEnter
+  autocmd!
+  autocmd BufEnter <buffer> nnoremap <CR> :lua insert_value()<CR>
+augroup END
+]])
+
+	-- Define the function to insert user input and trigger AI processing
+	function insert_value()
+		-- Retrieve the user input from the inputPopup buffer
+		local input_value = vim.api.nvim_buf_get_lines(inputPopup.bufnr, 0, -1, false)[1]
+
+		-- Check if input_value is not nil before triggering AI processing
+		if input_value then
+			-- Trigger the AI processing with the user input
+			M.exec({ prompt_name = "Ask" })
+		else
+			print("Error: No input value found.")
+		end
+	end
+
+	-- Set the layout
+	local layout = Layout({
+		position = "50%",
+		size = {
+			width = "80%",
+			height = "60%",
+		},
+	}, {
+		Layout.Box(virgilPopup, { size = "90%" }),
+		Layout.Box(inputPopup, { size = "10%" }),
+	})
+
+	-- Mount the layout to display the popups
+	layout:mount()
+end
+
+
