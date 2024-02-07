@@ -33,34 +33,64 @@ function M.get_window_options()
 		border = "single",
 	}
 end
+--function M.create_window(opts)
+--	-- Delete existing buffer if it exists
+--	if opts.result_buffer and vim.api.nvim_buf_is_valid(opts.result_buffer) then
+--		vim.api.nvim_buf_delete(opts.result_buffer, { force = true })
+--	end
+--
+--	-- Create a new buffer for the result with filetype set to markdown
+--	opts.result_buffer = vim.api.nvim_create_buf(false, true)
+--	vim.api.nvim_buf_set_option(opts.result_buffer, "filetype", "markdown")
+--
+--	-- Delete existing window if it exists
+--	if opts.float_win and vim.api.nvim_win_is_valid(opts.float_win) then
+--		vim.api.nvim_win_close(opts.float_win, true)
+--	end
+--
+--	-- Get window options and extend them with user-provided options
+--	local win_opts = vim.tbl_deep_extend("force", M.get_window_options(), opts.win_config)
+--
+--	-- Open a new window with the result buffer
+--	opts.float_win = vim.api.nvim_open_win(opts.result_buffer, true, win_opts)
+--
+--	-- Set options for the result buffer
+--	vim.api.nvim_buf_set_option(opts.result_buffer, "filetype", "markdown")
+--	vim.api.nvim_win_set_option(opts.float_win, "wrap", true)
+--	vim.api.nvim_win_set_option(opts.float_win, "linebreak", true)
+--	-- Return the buffer and window IDs
+--	return opts.result_buffer, opts.float_win
+--end
 
 -- Function to create a window based on the display mode
+-- Function to create a window based on the display mode
+local Popup = require("nui.popup")
+
 function M.create_window(opts)
-	-- Delete existing buffer if it exists
-	if opts.result_buffer and vim.api.nvim_buf_is_valid(opts.result_buffer) then
+	-- Delete existing popup if it exists
+	if opts.float_win and opts.float_win:is_valid() then
+		opts.float_win:close()
 		vim.api.nvim_buf_delete(opts.result_buffer, { force = true })
 	end
 
-	-- Create a new buffer for the result with filetype set to markdown
-	opts.result_buffer = vim.api.nvim_create_buf(false, true)
-	vim.api.nvim_buf_set_option(opts.result_buffer, "filetype", "markdown")
+	-- Create a new Nui popup
+	local float_win = Popup({
+		position = "50%",
+		size = {
+			width = 80,
+			height = 20,
+		},
+		border = "rounded",
+	})
 
-	-- Delete existing window if it exists
-	if opts.float_win and vim.api.nvim_win_is_valid(opts.float_win) then
-		vim.api.nvim_win_close(opts.float_win, true)
-	end
+	-- Mount the popup to make it visible
+	float_win:mount()
 
-	-- Get window options and extend them with user-provided options
-	local win_opts = vim.tbl_deep_extend("force", M.get_window_options(), opts.win_config)
+	-- Set options for the result buffer (you can customize this based on your requirements)
+	vim.api.nvim_buf_set_option(float_win.bufnr, "filetype", "markdown")
 
-	-- Open a new window with the result buffer
-	opts.float_win = vim.api.nvim_open_win(opts.result_buffer, true, win_opts)
-
-	-- Set options for the result buffer
-	vim.api.nvim_buf_set_option(opts.result_buffer, "filetype", "markdown")
-	vim.api.nvim_win_set_option(opts.float_win, "wrap", true)
-	vim.api.nvim_win_set_option(opts.float_win, "linebreak", true)
-	-- Return the buffer and window IDs
-	return opts.result_buffer, opts.float_win
+	-- Return both the Nui popup and the associated buffer
+	return { float_win = float_win, result_buffer = float_win.bufnr }
 end
+
 return M
