@@ -94,7 +94,6 @@ local function initiateVirgil(opts)
 
 	-- Call the initiateVirgil function to create a new Nui popup
 	local virgilPopup = Popup({
-		enter = true,
 		focusable = true,
 		border = {
 			style = "rounded",
@@ -119,6 +118,7 @@ local function initiateVirgil(opts)
 	local inputPopup = Popup({
 		enter = true,
 		focusable = true,
+		mode = "i",
 		border = {
 			style = "rounded",
 			highlight = "Normal", -- Border color
@@ -154,13 +154,42 @@ local function initiateVirgil(opts)
 	-- Update M.float_win and M.result_buffer with the new popup and buffer
 	M.float_win = virgilPopup.winid
 	M.result_buffer = virgilPopup.bufnr
-	-- Set options for the result buffer
+
+	------------------------------------
+	---------- BUFFER OPTIONS ----------
+	------------------------------------
 	vim.api.nvim_buf_set_option(M.result_buffer, "filetype", "markdown") -- Set options for the result buffer
 	vim.api.nvim_win_set_option(M.float_win, "wrap", true)
 	vim.api.nvim_win_set_option(M.float_win, "linebreak", true)
 	vim.api.nvim_win_set_option(M.float_win, "breakindent", true)
 	vim.api.nvim_win_set_option(M.float_win, "breakindentopt", "shift:2,min:10")
 
+	------------------------------------
+	------- HANDLE POPUP INPUT ---------
+	------------------------------------
+	-- Listen for Enter key press in inputPopup only if initiateVirgil is active
+	if M.float_win and vim.api.nvim_win_is_valid(M.float_win) then
+		-- Listen for Enter key press in insert mode
+		vim.api.nvim_buf_set_keymap(0, "i", "<CR>", "<Cmd>lua submitPrompt()<CR>", { noremap = true, silent = true })
+
+		-- Define a Lua function to submit the prompt
+		_G.submitPrompt = function()
+			local input_text = vim.api.nvim_buf_get_lines(inputPopup.bufnr, 0, -1, false)
+			local prompt = table.concat(input_text, "\n")
+
+			-- Clear the buffer content
+			vim.api.nvim_buf_set_lines(inputPopup.bufnr, 0, -1, false, {})
+			if prompt:lower() == "exit" then
+				-- Close down the popup and perform cleanup
+				vim.api.nvim_win_close(inputPopup.winid, true)
+				vim.api.nvim_buf_delete(inputPopup.bufnr, { force = true })
+				reset()
+				return
+			end
+			-- Process input prompt and send it to AI model
+			M.exec({ prompt = prompt })
+		end
+	end
 	print("M.result_buffer:", M.result_buffer)
 	print("M.float_win:", M.float_win)
 end
