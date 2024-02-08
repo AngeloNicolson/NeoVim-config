@@ -99,6 +99,7 @@ local function initiateVirgil(opts)
 			style = "rounded",
 			highlight = "Normal", -- Border color
 			text = {
+				top = "V.E.R.G.I.L",
 				fg = "Blue", -- Text color
 			},
 		},
@@ -117,8 +118,8 @@ local function initiateVirgil(opts)
 	})
 	local inputPopup = Popup({
 		enter = true,
-		focusable = true,
 		mode = "i",
+		focusable = true,
 		border = {
 			style = "rounded",
 			highlight = "Normal", -- Border color
@@ -133,6 +134,10 @@ local function initiateVirgil(opts)
 		},
 		text = {
 			fg = "VirgilPopupText", -- Color group for text
+		},
+		win_options = {
+			-- Set the background color to match the editor's background
+			winhighlight = "Normal:Normal,VirgilPopupText:Normal,VirgilPopupBorder:Normal",
 		},
 	})
 
@@ -163,6 +168,8 @@ local function initiateVirgil(opts)
 	vim.api.nvim_win_set_option(M.float_win, "linebreak", true)
 	vim.api.nvim_win_set_option(M.float_win, "breakindent", true)
 	vim.api.nvim_win_set_option(M.float_win, "breakindentopt", "shift:2,min:10")
+	-- Set focus to inputPopup and switch to insert mode
+	vim.api.nvim_set_current_win(inputPopup.winid)
 
 	------------------------------------
 	------- HANDLE POPUP INPUT ---------
@@ -172,20 +179,26 @@ local function initiateVirgil(opts)
 		-- Listen for Enter key press in insert mode
 		vim.api.nvim_buf_set_keymap(0, "i", "<CR>", "<Cmd>lua submitPrompt()<CR>", { noremap = true, silent = true })
 
-		-- Define a Lua function to submit the prompt
 		_G.submitPrompt = function()
 			local input_text = vim.api.nvim_buf_get_lines(inputPopup.bufnr, 0, -1, false)
 			local prompt = table.concat(input_text, "\n")
 
 			-- Clear the buffer content
 			vim.api.nvim_buf_set_lines(inputPopup.bufnr, 0, -1, false, {})
-			if prompt:lower() == "exit" then
+
+			if prompt:lower() == "exit" or prompt:lower() == ":q" then
+				-- Set insert popup to normal mode
+				vim.api.nvim_win_set_option(inputPopup.winid, "wrap", false)
+				vim.api.nvim_win_set_option(inputPopup.winid, "cursorline", false)
+				vim.api.nvim_command("stopinsert")
+
 				-- Close down the popup and perform cleanup
 				vim.api.nvim_win_close(inputPopup.winid, true)
 				vim.api.nvim_buf_delete(inputPopup.bufnr, { force = true })
 				reset()
 				return
 			end
+
 			-- Process input prompt and send it to AI model
 			M.exec({ prompt = prompt })
 		end
