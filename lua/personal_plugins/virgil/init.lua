@@ -31,10 +31,10 @@ local default_options = {
 for k, v in pairs(default_options) do
 	M[k] = v
 end
+
 --------------------------------------------------------------------------------
 ------------------------------- AI MODEL API CALL ------------------------------
 --------------------------------------------------------------------------------
-
 local curr_buffer = nil
 local start_pos = nil
 local end_pos = nil
@@ -59,6 +59,10 @@ M.setup = function(opts)
 		M[k] = v
 	end
 end
+
+--------------------------------------------------------------------------------
+----------------------------- V.E.R.G.I.L BUFFER -------------------------------
+--------------------------------------------------------------------------------
 function write_to_buffer(lines)
 	if not M.result_buffer or not vim.api.nvim_buf_is_valid(M.result_buffer) then
 		return
@@ -78,6 +82,9 @@ function write_to_buffer(lines)
 	print(lines)
 end
 
+--------------------------------------------------------------------------------
+----------------------------- V.E.R.G.I.L WIDOWS -------------------------------
+--------------------------------------------------------------------------------
 local function initiateVirgil(opts)
 	-- Delete existing popup if it exists
 	if M.float_win and vim.api.nvim_win_is_valid(M.float_win) then
@@ -86,7 +93,7 @@ local function initiateVirgil(opts)
 	end
 
 	-- Call the initiateVirgil function to create a new Nui popup
-	local popup_data = Popup({
+	local virgilPopup = Popup({
 		enter = true,
 		focusable = true,
 		border = {
@@ -96,29 +103,59 @@ local function initiateVirgil(opts)
 				fg = "Blue", -- Text color
 			},
 		},
-		text = {
-			fg = "VirgilPopupText", -- Color group for text
-		},
 		position = "50%",
 		size = {
 			width = "80%",
 			height = "60%",
+		},
+		text = {
+			fg = "VirgilPopupText", -- Color group for text
 		},
 		win_options = {
 			-- Set the background color to match the editor's background
 			winhighlight = "Normal:Normal,VirgilPopupText:Normal,VirgilPopupBorder:Normal",
 		},
 	})
+	local inputPopup = Popup({
+		enter = true,
+		focusable = true,
+		border = {
+			style = "rounded",
+			highlight = "Normal", -- Border color
+			text = {
+				fg = "Blue", -- Text color
+			},
+		},
+		position = "50%",
+		size = {
+			width = "50%",
+			height = "30%",
+		},
+		text = {
+			fg = "VirgilPopupText", -- Color group for text
+		},
+	})
 
-	-- Mount the popup to make it visible
-	popup_data:mount()
+	local layout = Layout(
+		{
+			position = "50%",
+			size = {
+				width = 80,
+				height = "60%",
+			},
+		},
+		Layout.Box({
+			Layout.Box(virgilPopup, { size = "90%" }),
+			Layout.Box(inputPopup, { size = "10%" }),
+		}, { dir = "col" })
+	)
+	layout:mount()
 
 	-- Update M.float_win and M.result_buffer with the new popup and buffer
-	M.float_win = popup_data.winid
-	M.result_buffer = popup_data.bufnr
+	M.float_win = virgilPopup.winid
+	M.result_buffer = virgilPopup.bufnr
 	-- Set options for the result buffer
 	vim.api.nvim_buf_set_option(M.result_buffer, "filetype", "markdown") -- Set options for the result buffer
-	-- Enable content wrapping for the result window
 	vim.api.nvim_win_set_option(M.float_win, "wrap", true)
 	vim.api.nvim_win_set_option(M.float_win, "linebreak", true)
 	vim.api.nvim_win_set_option(M.float_win, "breakindent", true)
@@ -244,8 +281,7 @@ M.exec = function(options)
 					vim.fn.jobstop(job_id)
 				end
 				if M.result_buffer then
-					--TODO: This is closing the window. Maybe beacuse the window gets unfocused?
-					--	vim.api.nvim_buf_delete(M.result_buffer, { force = true })
+					vim.api.nvim_buf_delete(M.result_buffer, { force = true })
 				end
 				reset()
 				return
@@ -332,7 +368,7 @@ M.exec = function(options)
 		end,
 	})
 
-	local group = vim.api.nvim_create_augroup("gen", { clear = true })
+	local group = vim.api.nvim_create_augroup("vergil", { clear = true })
 	local event
 	vim.api.nvim_create_autocmd("WinClosed", {
 		buffer = M.result_buffer,
@@ -405,7 +441,7 @@ function select_prompt(cb)
 	end)
 end
 
-vim.api.nvim_create_user_command("Virgil", function(arg)
+vim.api.nvim_create_user_command("Vergil", function(arg)
 	local mode
 	if arg.range == 0 then
 		mode = "n"
@@ -460,7 +496,7 @@ function process_response(str, job_id, json_response)
 				M.context = result.context
 			end
 		else
-			write_to_buffer({ "", "====== ERROR ====", str, "-------------", "" })
+			write_to_buffer({ "", "====== ERROR ======", str, "-------------", "" })
 			vim.fn.jobstop(job_id)
 		end
 	else

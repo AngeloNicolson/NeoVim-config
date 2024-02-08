@@ -93,7 +93,6 @@ function M.create_window(opts)
 	return { float_win = float_win, result_buffer = float_win.bufnr }
 end
 
-return M
 --------------------------------------------------------------------------------
 ---------------------------- V.I.R.G.I.L INTERFACE -----------------------------
 --------------------------------------------------------------------------------
@@ -189,4 +188,4 @@ augroup END
 	layout:mount()
 end
 
-
+return M
