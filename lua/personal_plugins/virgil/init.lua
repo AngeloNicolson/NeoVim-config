@@ -117,7 +117,12 @@ local function initiateVirgil(opts)
 	M.float_win = popup_data.winid
 	M.result_buffer = popup_data.bufnr
 	-- Set options for the result buffer
-	vim.api.nvim_buf_set_option(M.result_buffer, "filetype", "markdown")
+	vim.api.nvim_buf_set_option(M.result_buffer, "filetype", "markdown") -- Set options for the result buffer
+	-- Enable content wrapping for the result window
+	vim.api.nvim_win_set_option(M.float_win, "wrap", true)
+	vim.api.nvim_win_set_option(M.float_win, "linebreak", true)
+	vim.api.nvim_win_set_option(M.float_win, "breakindent", true)
+	vim.api.nvim_win_set_option(M.float_win, "breakindentopt", "shift:2,min:10")
 
 	print("M.result_buffer:", M.result_buffer)
 	print("M.float_win:", M.float_win)
