@@ -1,4 +1,5 @@
 local Popup = require("nui.popup")
+local Menu = require("nui.menu")
 local prompts = require("personal_plugins.virgil.virgil_prompts")
 local Layout = require("nui.layout")
 local M = {}
@@ -10,9 +11,6 @@ local default_options = {
 	show_model = false,
 	command = "curl --silent --no-buffer -X POST http://localhost:11434/api/generate -d $body",
 	json_response = true,
-	no_auto_close = false,
-	display_mode = "float",
-	no_auto_close = false,
 	init = function()
 		pcall(io.popen, "ollama serve > /dev/null 2>&1 &")
 	end,
@@ -61,7 +59,7 @@ M.setup = function(opts)
 end
 
 --------------------------------------------------------------------------------
------------------------------ V.E.R.G.I.L BUFFER -------------------------------
+----------------------------- V.I.R.G.I.L BUFFER -------------------------------
 --------------------------------------------------------------------------------
 function write_to_buffer(lines)
 	if not M.result_buffer or not vim.api.nvim_buf_is_valid(M.result_buffer) then
@@ -79,11 +77,11 @@ function write_to_buffer(lines)
 	vim.api.nvim_buf_set_option(M.result_buffer, "modifiable", true)
 	vim.api.nvim_buf_set_text(M.result_buffer, last_row - 1, last_col, last_row - 1, last_col, vim.split(text, "\n"))
 	vim.api.nvim_buf_set_option(M.result_buffer, "modifiable", false)
-	print(lines)
+	--print(lines)
 end
 
 --------------------------------------------------------------------------------
------------------------------ V.E.R.G.I.L WIDOWS -------------------------------
+---------------------------- V.I.R.G.I.L WINDOWS -------------------------------
 --------------------------------------------------------------------------------
 local function initiateVirgil(opts)
 	-- Delete existing popup if it exists
@@ -94,13 +92,14 @@ local function initiateVirgil(opts)
 
 	-- Call the initiateVirgil function to create a new Nui popup
 	local virgilPopup = Popup({
+		enter = false,
 		focusable = true,
 		border = {
 			style = "rounded",
 			highlight = "Normal", -- Border color
 			text = {
-				top = "V.E.R.G.I.L",
-				fg = "Blue", -- Text color
+				fg = "#FFFFFF",
+				top = "VIRGIL",
 			},
 		},
 		position = "50%",
@@ -118,7 +117,6 @@ local function initiateVirgil(opts)
 	})
 	local inputPopup = Popup({
 		enter = true,
-		mode = "i",
 		focusable = true,
 		border = {
 			style = "rounded",
@@ -151,7 +149,7 @@ local function initiateVirgil(opts)
 		},
 		Layout.Box({
 			Layout.Box(virgilPopup, { size = "90%" }),
-			Layout.Box(inputPopup, { size = "10%" }),
+			Layout.Box(inputPopup, { size = "15%" }),
 		}, { dir = "col" })
 	)
 	layout:mount()
@@ -170,6 +168,7 @@ local function initiateVirgil(opts)
 	vim.api.nvim_win_set_option(M.float_win, "breakindentopt", "shift:2,min:10")
 	-- Set focus to inputPopup and switch to insert mode
 	vim.api.nvim_set_current_win(inputPopup.winid)
+	vim.api.nvim_command("startinsert")
 
 	------------------------------------
 	------- HANDLE POPUP INPUT ---------
@@ -183,7 +182,7 @@ local function initiateVirgil(opts)
 			local input_text = vim.api.nvim_buf_get_lines(inputPopup.bufnr, 0, -1, false)
 			local prompt = table.concat(input_text, "\n")
 
-			-- Clear the buffer content
+			-- clear the buffer content
 			vim.api.nvim_buf_set_lines(inputPopup.bufnr, 0, -1, false, {})
 
 			if prompt:lower() == "exit" or prompt:lower() == ":q" then
@@ -203,8 +202,8 @@ local function initiateVirgil(opts)
 			M.exec({ prompt = prompt })
 		end
 	end
-	print("M.result_buffer:", M.result_buffer)
-	print("M.float_win:", M.float_win)
+	-- print("M.result_buffer:", M.result_buffer)
+	-- print("M.float_win:", M.float_win)
 end
 
 function reset()
@@ -410,7 +409,7 @@ M.exec = function(options)
 		end,
 	})
 
-	local group = vim.api.nvim_create_augroup("vergil", { clear = true })
+	local group = vim.api.nvim_create_augroup("Virgil", { clear = true })
 	local event
 	vim.api.nvim_create_autocmd("WinClosed", {
 		buffer = M.result_buffer,
@@ -425,30 +424,31 @@ M.exec = function(options)
 			reset()
 		end,
 	})
-
+	------------------------------------
+	----------- USER PROMPTS -----------
+	------------------------------------
 	if opts.show_prompt then
 		local lines = vim.split(prompt, "\n")
 		local short_prompt = {}
 		for i = 1, #lines do
-			lines[i] = "> " .. lines[i]
 			table.insert(short_prompt, lines[i])
 			if i >= 3 then
 				if #lines > i then
-					table.insert(short_prompt, "...")
+					table.insert(short_prompt, "```")
 				end
 				break
 			end
 		end
-		local heading = "#"
-		if M.show_model then
-			heading = "##"
-		end
+		local heading = " "
 		write_to_buffer({
-			heading .. " Prompt:",
+			"",
+			"# ---------------------------------- You ------------------------------------",
 			"",
 			table.concat(short_prompt, "\n"),
+			" ",
+			" ",
+			"# --------------------------------- Virgil ----------------------------------",
 			"",
-			"---",
 			"",
 		})
 	end
@@ -483,7 +483,7 @@ function select_prompt(cb)
 	end)
 end
 
-vim.api.nvim_create_user_command("Vergil", function(arg)
+vim.api.nvim_create_user_command("Virgil", function(arg)
 	local mode
 	if arg.range == 0 then
 		mode = "n"
@@ -550,7 +550,7 @@ function process_response(str, job_id, json_response)
 	end
 
 	M.result_string = M.result_string .. text
-	print(str)
+	-- print(str)
 	local lines = vim.split(text, "\n")
 	write_to_buffer(lines)
 end
