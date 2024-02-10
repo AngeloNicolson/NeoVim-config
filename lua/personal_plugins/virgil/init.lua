@@ -31,7 +31,7 @@ for k, v in pairs(default_options) do
 end
 
 --------------------------------------------------------------------------------
-------------------------------- AI MODEL API CALL ------------------------------
+------------------------------ AI MODEL API CALL -------------------------------
 --------------------------------------------------------------------------------
 local curr_buffer = nil
 local start_pos = nil
@@ -149,7 +149,7 @@ local function initiateVirgil(opts)
 		},
 		Layout.Box({
 			Layout.Box(virgilPopup, { size = "90%" }),
-			Layout.Box(inputPopup, { size = "15%" }),
+			Layout.Box(inputPopup, { size = "20%" }),
 		}, { dir = "col" })
 	)
 	layout:mount()
@@ -179,12 +179,12 @@ local function initiateVirgil(opts)
 		vim.api.nvim_buf_set_keymap(0, "i", "<CR>", "<Cmd>lua submitPrompt()<CR>", { noremap = true, silent = true })
 
 		_G.submitPrompt = function()
+			-- Retrieve the input directly from the inputPopup buffer
 			local input_text = vim.api.nvim_buf_get_lines(inputPopup.bufnr, 0, -1, false)
 			local prompt = table.concat(input_text, "\n")
 
-			-- clear the buffer content
+			-- Clear the buffer content
 			vim.api.nvim_buf_set_lines(inputPopup.bufnr, 0, -1, false, {})
-
 			if prompt:lower() == "exit" or prompt:lower() == ":q" then
 				-- Set insert popup to normal mode
 				vim.api.nvim_win_set_option(inputPopup.winid, "wrap", false)
@@ -236,6 +236,7 @@ M.exec = function(options)
 		vim.api.nvim_buf_get_text(curr_buffer, start_pos[2] - 1, start_pos[3] - 1, end_pos[2] - 1, end_pos[3] - 1, {}),
 		"\n"
 	)
+
 	local function substitute_placeholders(input)
 		if not input then
 			return
@@ -260,6 +261,7 @@ M.exec = function(options)
 		text = string.gsub(text, "%$filetype", vim.bo.filetype)
 		return text
 	end
+
 	local prompt = opts.prompt
 
 	if type(prompt) == "function" then
@@ -473,16 +475,41 @@ function select_prompt(cb)
 		table.insert(promptKeys, key)
 	end
 	table.sort(promptKeys)
-	vim.ui.select(promptKeys, {
-		prompt = "Prompt:",
-		format_item = function(item)
-			return table.concat(vim.split(item, "_"), " ")
-		end,
-	}, function(item, idx)
-		cb(item)
-	end)
-end
 
+	local menuItems = {}
+	for _, key in ipairs(promptKeys) do
+		table.insert(menuItems, Menu.item(key))
+	end
+
+	local menu = Menu({
+		position = "50%",
+		size = {
+			width = 25,
+			height = 7,
+		},
+		border = {
+			style = "rounded",
+			text = {
+				top = "Select a Prompt",
+				top_align = "center",
+			},
+		},
+		win_options = {
+			winhighlight = "Normal:Normal,FloatBorder:Normal",
+		},
+	}, {
+		lines = menuItems,
+		keymap = {
+			close = { "<Esc>", "<C-c>" },
+			submit = { "<CR>" },
+		},
+		on_submit = function(item)
+			cb(item.text)
+		end,
+	})
+
+	menu:mount()
+end
 vim.api.nvim_create_user_command("Virgil", function(arg)
 	local mode
 	if arg.range == 0 then
