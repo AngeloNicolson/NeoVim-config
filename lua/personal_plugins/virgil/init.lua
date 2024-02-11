@@ -90,6 +90,48 @@ local function initiateVirgil(opts)
 		vim.api.nvim_buf_delete(M.result_buffer, { force = true })
 	end
 
+	-- Create a menu of prompts
+	local promptKeys = {}
+	for key, _ in pairs(M.prompts) do
+		table.insert(promptKeys, key)
+	end
+	table.sort(promptKeys)
+
+	local menuItems = {}
+	for _, key in ipairs(promptKeys) do
+		table.insert(menuItems, Menu.item(key))
+	end
+
+	local menu = Menu({
+		position = "50%",
+		size = {
+			width = 25,
+			height = 7,
+		},
+		border = {
+			style = "rounded",
+			text = {
+				top = "Select a Prompt",
+				top_align = "center",
+			},
+		},
+		win_options = {
+			winhighlight = "Normal:Normal,FloatBorder:Normal",
+		},
+	}, {
+		lines = menuItems,
+		keymap = {
+			close = { "<Esc>", "<C-c>" },
+			submit = { "<CR>" },
+		},
+		on_submit = function(item)
+			-- Handle submission of selected prompt
+			-- You may call M.exec with the selected prompt here
+			-- For example:
+			-- M.exec({ prompt = M.prompts[item.text] })
+		end,
+	})
+
 	-- Call the initiateVirgil function to create a new Nui popup
 	local virgilPopup = Popup({
 		enter = false,
@@ -149,11 +191,13 @@ local function initiateVirgil(opts)
 		},
 		Layout.Box({
 			Layout.Box(virgilPopup, { size = "90%" }),
-			Layout.Box(inputPopup, { size = "20%" }),
-		}, { dir = "col" })
+			Layout.Box({
+				Layout.Box(inputPopup, { size = "70%" }), -- Adjust size here
+				Layout.Box(menu, { size = "30%" }), -- Adjust size here
+			}, { size = "20%", dir = "row" }), -- Specify size and direction here
+		}, { size = "100%", dir = "col" })
 	)
 	layout:mount()
-
 	-- Update M.float_win and M.result_buffer with the new popup and buffer
 	M.float_win = virgilPopup.winid
 	M.result_buffer = virgilPopup.bufnr
@@ -213,6 +257,9 @@ function reset()
 	M.context = nil
 end
 
+--------------------------------------------------------------------------------
+----------------------------- EXECUTION FUNCTIONS ------------------------------
+--------------------------------------------------------------------------------
 M.exec = function(options)
 	local opts = vim.tbl_deep_extend("force", M, options)
 
