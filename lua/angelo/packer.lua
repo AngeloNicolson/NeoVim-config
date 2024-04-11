@@ -40,7 +40,6 @@ return require("packer").startup(function(use)
 			"rcarriga/nvim-notify",
 		},
 	})
-
 	-------------------------------------------------------------
 	-------------------------- THEME ----------------------------
 	-------------------------------------------------------------
@@ -100,4 +99,40 @@ return require("packer").startup(function(use)
 	------------------- AI ASSISTANT VIRGIL ---------------------
 	-------------------------------------------------------------
 	--use({ "David-Kunz/gen.nvim" })
+
+	-------------------------------------------------------------
+	------------------------- OBSIDIAN --------------------------
+	-------------------------------------------------------------
+
+	use({
+		"epwalsh/obsidian.nvim",
+		tag = "*", -- recommended, use latest release instead of latest commit
+		requires = {
+			-- Required.
+			"nvim-lua/plenary.nvim",
+
+			-- see below for full list of optional dependencies 👇
+		},
+		config = function() end,
+	})
+	-- install without yarn or npm
+	use({
+		"iamcco/markdown-preview.nvim",
+		run = function()
+			vim.fn["mkdp#util#install"]()
+		end,
+	})
+
+	use({
+		"iamcco/markdown-preview.nvim",
+		run = "cd app && npm install",
+		setup = function()
+			vim.g.mkdp_filetypes = { "markdown" }
+		end,
+		ft = { "markdown" },
+	})
+	use({
+		"nvim-telescope/telescope-file-browser.nvim",
+		requires = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
+	})
 end)
