@@ -1,3 +1,4 @@
+--  GLOBAL VIM SETTINGS
 -- vim.opt settings go here
 
 -- Cursor settings

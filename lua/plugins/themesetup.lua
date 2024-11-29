@@ -2,9 +2,6 @@ return {
 	-- Gruvbox themes
 	"sainnhe/gruvbox-material",
 
-	-- Vim-Tmux Navigator
-	"christoomey/vim-tmux-navigator",
-
 	-- Configuration for termguicolors and Gruvbox Material options
 	config = function()
 		-- Enable termguicolors for true color support

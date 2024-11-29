@@ -11,6 +11,14 @@ return {
 			"hrsh7th/cmp-nvim-lsp",
 			"L3MON4D3/LuaSnip",
 		},
+
+           require("mason-lspconfig").setup({
+        ensure_installed = {
+          "html", "yamlls", "pyright", "grammarly",
+          "jsonls", "denols", "lua_ls", "clangd", "cmake"
+        },
+      }),
+
 		config = function()
 			local lsp = require("lsp-zero")
 
