@@ -12,18 +12,41 @@ return {
 			"L3MON4D3/LuaSnip",
 		},
 
-           require("mason-lspconfig").setup({
-        ensure_installed = {
-          "html", "yamlls", "pyright", "grammarly",
-          "jsonls", "denols", "lua_ls", "clangd", "cmake"
-        },
-      }),
-
 		config = function()
+			-- Require lsp-zero
 			local lsp = require("lsp-zero")
 
 			-- Set up LSP with lsp-zero
 			lsp.preset("recommended")
+
+			-- Mason configuration
+			require("mason").setup()
+			require("mason-lspconfig").setup({
+				ensure_installed = {
+					"html",
+					"yamlls",
+					"pyright",
+					"grammarly",
+					"jsonls",
+					"denols",
+					"lua_ls",
+					"clangd",
+					"cmake",
+				},
+			})
+
+			-- Additional LSP server-specific settings
+			lsp.configure("lua_ls", {
+				settings = {
+					Lua = {
+						diagnostics = {
+							globals = { "vim" }, -- Recognize `vim` as a global
+						},
+					},
+				},
+			})
+
+			-- Finalize LSP setup
 			lsp.setup()
 
 			-- nvim-cmp configuration
