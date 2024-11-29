@@ -22,7 +22,12 @@ return {
 				hint = "⚑",
 				info = "»",
 			})
-
+   require("mason-lspconfig").setup({
+        ensure_installed = {
+          "html", "yamlls", "pyright", "grammarly",
+          "jsonls", "denols", "lua_ls", "clangd", "cmake"
+        },
+      })
 			-- This function runs when the LSP attaches to a buffer
 			lsp.on_attach(function(client, bufnr)
 				lsp.default_keymaps({ buffer = bufnr })

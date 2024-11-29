@@ -1,4 +1,6 @@
 return {
+	{ "sainnhe/gruvbox-material" },
+
 	-- Neo-tree
 	{
 		"nvim-neo-tree/neo-tree.nvim",

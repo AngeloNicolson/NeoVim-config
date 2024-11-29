@@ -9,7 +9,6 @@ return {
 		config = function()
 			local builtin = require("telescope.builtin")
 			local telescope = require("telescope")
-			local themes = require("telescope.themes")
 
 			-- Set up Telescope with your key mappings
 			vim.keymap.set("n", "<leader>pf", builtin.find_files, {})
@@ -19,19 +18,7 @@ return {
 			end)
 
 			-- Telescope setup with extensions and floating window configuration
-			telescope.setup({
-				extensions = {
-					["ui-select"] = {
-						require("telescope.themes").get_dropdown({}),
-					},
-				},
-				floating = {
-					border = {},
-				},
-			})
-
-			-- Load the ui-select extension
-			telescope.load_extension("ui-select")
+			telescope.setup({})
 		end,
 	},
 
