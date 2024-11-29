@@ -1,27 +1,37 @@
-local status_ok_lualine, lualine = pcall(require, "lualine")
+return {
+	-- Status Line
+	{
 
-if not status_ok_lualine then
-	return
-end
+		"nvim-lualine/lualine.nvim",
 
--- Option 1:
--- local noirbuddy_lualine = require("noirbuddy.plugins.lualine")
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 
--- local theme = noirbuddy_lualine.theme
--- optional, you can define those yourself if you need
--- local sections = noirbuddy_lualine.sections
--- local inactive_sections = noirbuddy_lualine.inactive_sections
+		config = function()
+			local status_ok_lualine, lualine = pcall(require, "lualine")
 
-lualine.setup({
-	options = {
-		icons_enabled = true,
-		theme = "gruvbox-material",
-		filetype = { colored = false },
-		component_separators = { left = "", right = "" },
-		section_separators = { left = "", right = "" },
-		disabled_filetypes = {},
-		always_divide_middle = true,
+			if not status_ok_lualine then
+				return
+			end
+
+			-- Optionally, you can define your sections if needed
+			-- local noirbuddy_lualine = require("noirbuddy.plugins.lualine")
+			-- local theme = noirbuddy_lualine.theme
+			-- local sections = noirbuddy_lualine.sections
+			-- local inactive_sections = noirbuddy_lualine.inactive_sections
+
+			lualine.setup({
+				options = {
+					icons_enabled = true, -- Enable icons
+					theme = "gruvbox-material", -- Set theme
+					filetype = { colored = false }, -- Disable filetype colored
+					component_separators = { left = "", right = "" }, -- Remove component separators
+					section_separators = { left = "", right = "" }, -- Remove section separators
+					disabled_filetypes = {}, -- No filetypes disabled
+					always_divide_middle = true, -- Always divide the middle
+				},
+				sections = sections, -- Customize sections as needed
+				inactive_sections = inactive_sections, -- Customize inactive sections
+			})
+		end,
 	},
-	sections = sections,
-	inactive_sections = inactive_sections,
-})
+}
