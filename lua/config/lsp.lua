@@ -1,9 +1,11 @@
 local lsp = require("lsp-zero").preset({})
 
+-- This function runs when the LSP attaches to a buffer
 lsp.on_attach(function(client, bufnr)
 	lsp.default_keymaps({ buffer = bufnr })
 end)
 
+-- Format on save configuration
 lsp.format_on_save({
 	format_opts = {
 		async = true,
@@ -26,22 +28,22 @@ lsp.format_on_save({
 			"cpp",
 			"hpp",
 			"lua",
+			"php",
 		},
 	},
 })
 
+-- Setup LSP
 lsp.setup()
 
 local null_ls = require("null-ls")
 
+-- Setup null-ls with sources
 null_ls.setup({
 	sources = {
-		---------------------------------------------------------------------------------
 		---------------------------------- PRETTIER ------------------------------------
-		--------------------------------------------------------------------------------
 		null_ls.builtins.formatting.prettierd.with({
 			extra_args = {
-				"--no-semi",
 				"--double-quote",
 				"--jsx",
 				"--jsx=react",
@@ -62,9 +64,7 @@ null_ls.setup({
 			},
 		}),
 
-		--------------------------------------------------------------------------------
 		------------------------------------ BLACK -------------------------------------
-		--------------------------------------------------------------------------------
 		null_ls.builtins.formatting.black.with({
 			extra_args = {
 				"--line-length=80",
@@ -72,9 +72,7 @@ null_ls.setup({
 			filetypes = { "py", "python" },
 		}),
 
-		--------------------------------------------------------------------------------
 		------------------------------- CLANG-FORMATTER --------------------------------
-		--------------------------------------------------------------------------------
 		null_ls.builtins.formatting.clang_format.with({
 			extra_args = {
 				"--style=Microsoft",
@@ -82,16 +80,23 @@ null_ls.setup({
 			filetypes = { "c", "cpp", "h", "hpp" },
 		}),
 
-		--------------------------------------------------------------------------------
 		----------------------------------- LUA ----------------------------------------
-		--------------------------------------------------------------------------------
-		null_ls.builtins.formatting.stylua.with({ extra_args = {}, filetypes = { "lua" } }),
+		null_ls.builtins.formatting.stylua.with({
+			extra_args = {},
+			filetypes = { "lua" },
+		}),
 
-		--------------------------------------------------------------------------------
+		---------------------------------- PHP-CS-FIXER --------------------------------
+		null_ls.builtins.formatting.phpcsfixer.with({
+			extra_args = {
+			},
+			filetypes = { "php" },
+		}),
+
 		---------------------------------- ESLINT_D -------------------------------------
-		--------------------------------------------------------------------------------
-		null_ls.builtins.diagnostics.eslint_d.with({
-			diagnostics_format = "[eslint] #{m}\n(#{c})",
-		}), --  null_ls.builtins.diagnostics.fish
+		-- Uncomment and configure if needed
+		-- null_ls.builtins.diagnostics.eslint_d.with({
+		--     diagnostics_format = "[eslint] #{m}\n(#{c})",
+		-- }),
 	},
 })

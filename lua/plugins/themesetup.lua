@@ -18,3 +18,5 @@ vim.g.gruvbox_material_foreground = "original"
 
 -- Load Gruvbox Material color scheme
 vim.cmd("colorscheme gruvbox-material")
+
+ColorMyPencils()
