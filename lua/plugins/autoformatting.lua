@@ -28,8 +28,10 @@ return {
 				lsp.default_keymaps({ buffer = bufnr })
 			end)
 
+            
 			-- Format on save configuration
-			lsp.format_on_save({
+			-- Using null_ls as rules for formatting code
+            lsp.format_on_save({
 				format_opts = {
 					async = true,
 					timeout_ms = 10000,
