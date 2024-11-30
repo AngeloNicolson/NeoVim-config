@@ -22,4 +22,4 @@ vim.keymap.set("n", "<leader>Y", '"+y')
 vim.keymap.set("n", "<leader>w", "<C-w>")
 
 -- Map Neotree command to <leader>-e
-vim.keymap.set("n", "<leader>e", ":Neotree toggle<CR>")
+vim.keymap.set("n", "<leader>e", ":Neotree right toggle<CR>")

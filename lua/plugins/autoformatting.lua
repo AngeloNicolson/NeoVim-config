@@ -22,16 +22,42 @@ return {
 				hint = "⚑",
 				info = "»",
 			})
-            --
+			--
 			-- This function runs when the LSP attaches to a buffer
 			lsp.on_attach(function(client, bufnr)
 				lsp.default_keymaps({ buffer = bufnr })
+
+				-- Go to Definition (using the default LSP mapping)
+				vim.api.nvim_buf_set_keymap(
+					bufnr,
+					"n",
+					"gd",
+					"<Cmd>lua vim.lsp.buf.definition()<CR>",
+					{ noremap = true, silent = true }
+				)
+
+				-- Go to Type Definition (optional)
+				vim.api.nvim_buf_set_keymap(
+					bufnr,
+					"n",
+					"gt",
+					"<Cmd>lua vim.lsp.buf.type_definition()<CR>",
+					{ noremap = true, silent = true }
+				)
+
+				-- Go to Declaration (optional)
+				vim.api.nvim_buf_set_keymap(
+					bufnr,
+					"n",
+					"gD",
+					"<Cmd>lua vim.lsp.buf.declaration()<CR>",
+					{ noremap = true, silent = true }
+				)
 			end)
 
-            
 			-- Format on save configuration
 			-- Using null_ls as rules for formatting code
-            lsp.format_on_save({
+			lsp.format_on_save({
 				format_opts = {
 					async = true,
 					timeout_ms = 10000,
@@ -118,6 +144,18 @@ return {
 					-- null_ls.builtins.diagnostics.eslint_d.with({
 					--     diagnostics_format = "[eslint] #{m}\n(#{c})",
 					-- }),
+				},
+			})
+
+			-- Setup Lua Language Server (lua_ls) to recognize vim global
+			local nvim_lsp = require("lspconfig")
+			nvim_lsp.lua_ls.setup({
+				settings = {
+					Lua = {
+						diagnostics = {
+							globals = { "vim" }, -- Add 'vim' to diagnostics globals
+						},
+					},
 				},
 			})
 		end,
